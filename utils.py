@@ -19,7 +19,7 @@ def make_dir(path):
                 os.makedirs(now_path)
 
 class Save():
-    def __init__(self, config, dataset):
+    def __init__(self, dataset):
         now = dt.datetime.now().strftime('%Y%m%d_%H%M%S')
         parent_path = os.path.join(os.getcwd(), 'log', dataset.lower(), now)
         self.model_path = os.path.join(parent_path, 'models')
@@ -37,7 +37,10 @@ class Save():
         torch.save(model.state_dict(), file_nm)
 
     def save_img(self, epoch, sample):
-        file_nm = os.path.join(self.sample_path, f'epoch{epoch}_sample.png')
+        if epoch == 'only_sampling':
+            file_nm = os.path.join(self.sample_path, 'sample.png')
+        else:
+            file_nm = os.path.join(self.sample_path, f'epoch{epoch}_sample.png')
         reverse_transform = transforms.Compose([
             transforms.Lambda(lambda x: (x + 1.) / 2)
         ])
@@ -51,5 +54,8 @@ class Save():
         plt.close()
     
     def save_tensor(self, epoch, sample):
-        file_nm = os.path.join(self.tensor_path, f'epoch{epoch}_tensor.pt')
+        if epoch == 'only_sampling':
+            file_nm = os.path.join(self.tensor_path, f'tensor.pt')
+        else:
+            file_nm = os.path.join(self.tensor_path, f'epoch{epoch}_tensor.pt')
         torch.save(sample, file_nm)

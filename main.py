@@ -35,7 +35,7 @@ if __name__ == '__main__':
     config['data'] = Dataset.config
 
     SDE = VPSDE(config)
-    model = UNet(config)
+    model = UNet(config).to(config['device'])
     model = model.to(dtype=torch.float32)
     model = nn.DataParallel(model)
     optimizer = optim.Adam(
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         weight_decay=config['optim']['weight_decay']
     )
     ema = EMA(config, model)
-    save = Save(config, args.dataset)
+    save = Save(args.dataset)
 
     losses = []
     for epoch in range(config['train']['epochs']):
