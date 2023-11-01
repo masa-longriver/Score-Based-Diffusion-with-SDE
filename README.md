@@ -15,5 +15,5 @@ python main.py cifar10
 - data.pyのDatasetクラスを適宜変更
 
 ## 参考
-> Y.Song, J.Sohl-Dickstain, D.P.Kingma, A.Kumar, S.Ermon, B.Poole, "Score-Based Generative Modeling through Stochastic Differential Equations", ICLR 2021.
+> Y.Song, J.Sohl-Dickstain, D.P.Kingma, A.Kumar, S.Ermon, B.Poole, "Score-Based Generative Modeling through Stochastic Differential Equations", ICLR 2021.  
 > [score_sde_pytorch](https://github.com/yang-song/score_sde_pytorch)
