@@ -1,12 +1,12 @@
 # Score-Based Diffusion with SDE
 
 ## 動作方法
-'''python
+```python
 python main.py ['データセット名']
 
 # ex.
 python main.py cifar10
-'''
+```
 
 デフォルトでCIFAR10を使った学習ができるようになっています。  
 新たなデータセットを試したい場合は、以下の手順を踏んでください。
