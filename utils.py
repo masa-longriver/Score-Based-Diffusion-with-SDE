@@ -38,17 +38,12 @@ class Save():
 
     def save_img(self, epoch, sample):
         file_nm = os.path.join(self.sample_path, f'epoch{epoch}_sample.png')
-        reverse_transform1 = transforms.Compose([
-            transforms.Lambda(lambda x: (x + 1) / 2)
+        reverse_transform = transforms.Compose([
+            transforms.Lambda(lambda x: (x + 1.) / 2)
         ])
-        reverse_transform2 = transforms.Compose([
-            transforms.Lambda(lambda x: x * 255.),
-            transforms.Lambda(lambda x: x.cpu().to(dtype=torch.int8))
-        ])
-        sample = reverse_transform1(sample)
+        sample = reverse_transform(sample).cpu()
         self.save_tensor(epoch, sample)
-        sample = reverse_transform2(sample)
-        print(sample)
+        sample = torch.clamp(sample * 255, min=0, max=255).to(dtype=torch.uint8)
         grid = vutils.make_grid(sample, nrow=5, padding=2)
         plt.axis('off')
         plt.imshow(grid.permute(1, 2, 0))

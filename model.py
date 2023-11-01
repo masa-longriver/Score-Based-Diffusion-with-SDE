@@ -320,8 +320,7 @@ class UNet(nn.Module):
         )
     
     def forward(self, x, t_emb):
-        h = 2 * x - 1
-        h_0 = self.Conv1(h)
+        h_0 = self.Conv1(x)
         t_emb = self.TimeEmbedding(t_emb)
         # DownBlock1
         h_1 = self.ResnetBlock_D11(h_0, t_emb)

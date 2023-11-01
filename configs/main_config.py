@@ -1,7 +1,7 @@
 config = {
     'seed': 25,
     'train': {
-        'epochs'           : 2000,
+        'epochs'           : 3000,
         'print_per_epochs' : 1,
         'eval_per_epochs'  : 10,
         'sample_per_epochs': 100,
