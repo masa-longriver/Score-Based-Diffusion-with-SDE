@@ -32,7 +32,7 @@ class Save():
     def save_model(self, epoch, model):
         file_nm = os.path.join(
             self.model_path, 
-            f'epoch{epoch}_model_stete_dict.pt'
+            f'epoch{epoch}_model_state_dict.pt'
         )
         torch.save(model.state_dict(), file_nm)
 

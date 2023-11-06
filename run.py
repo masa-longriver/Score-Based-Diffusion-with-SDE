@@ -21,7 +21,7 @@ def loss_fn(config, x, model, sde):
     perturbed_x = mean + std[:, None, None, None] * z
     score = score_fn(perturbed_x, t, model, sde)
     losses = torch.square(score * std[:, None, None, None] + z)
-    losses = torch.mean(losses.reshape(losses.shape[0], -1), dim=1)
+    losses = torch.mean(losses.reshape(losses.shape[0], -1), dim=-1)
     loss = torch.mean(losses)
 
     return loss
