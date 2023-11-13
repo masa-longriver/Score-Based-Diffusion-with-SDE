@@ -39,7 +39,7 @@ config = {
         'beta2'       : 0.999,
         'eps'         : 1e-8,
         'weight_decay': 0,
-        'warmup'      : 5000,
+        'warmup'      : 30,
         'grad_clip'   : 1.
     },
     'ema': {

@@ -25,6 +25,8 @@ def Conv(
         dilation = conv_config['dilation']
     if init_scale is None:
         init_scale = conv_config['init_scale']
+    elif init_scale == 0:
+        init_scale = 1e-10
     if padding is None:
         padding = conv_config['padding']
     
@@ -37,7 +39,7 @@ def Conv(
         padding=padding,
         kernel_size=conv_config['kernel_size']
     ).to(config['device'])
-    nn.init.xavier_uniform_(conv.weight)
+    nn.init.xavier_uniform_(conv.weight, gain=init_scale**(0.5))
     nn.init.zeros_(conv.bias)
 
     return conv
@@ -83,8 +85,10 @@ class TimeEmbedding(nn.Module):
 
 
 class NIN(nn.Module):
-    def __init__(self, config, input_dim, num_units):
+    def __init__(self, config, input_dim, num_units, init_scale=1.):
         super().__init__()
+        if init_scale == 0:
+            init_scale = 1e-10
         self.W = nn.Parameter(
             torch.empty(input_dim, num_units),
             requires_grad=True
@@ -92,7 +96,8 @@ class NIN(nn.Module):
         self.b = nn.Parameter(
             torch.zeros(num_units), requires_grad=True
         ).to(config['device'])
-        nn.init.xavier_uniform_(self.W)
+        nn.init.xavier_uniform_(self.W, gain=init_scale**(0.5))
+        nn.init.zeros_(self.b)
     
     def forward(self, x):
         x = x.permute(0, 2, 3, 1)
@@ -112,7 +117,7 @@ class ResnetBlock(nn.Module):
             eps=1e-6
         ).to(config['device'])
         self.act = nn.SiLU()
-        self.Conv_1 = Conv(config, in_channel, out_channel)
+        self.Conv_1 = Conv(config, in_channel, out_channel, init_scale=0.)
         self.Dense = nn.Linear(
             model_config['time_embedding']['emb_dim2'],
             out_channel
@@ -154,7 +159,7 @@ class AttnBlock(nn.Module):
         self.NIN_q = NIN(config, channels, channels)
         self.NIN_k = NIN(config, channels, channels)
         self.NIN_v = NIN(config, channels, channels)
-        self.NIN_tot = NIN(config, channels, channels)
+        self.NIN_tot = NIN(config, channels, channels, init_scale=0.)
     
     def forward(self, x):
         B, C, H, W = x.shape
@@ -247,11 +252,11 @@ class UNet(nn.Module):
         )
 
         # CenterBlock
-        self.ResnetBlock_C11 = ResnetBlock(
+        self.ResnetBlock_C1 = ResnetBlock(
             config, model_config['channel2'], model_config['channel2']
         )
         self.AttnBlock_C = AttnBlock(config, model_config['channel2'])
-        self.ResnetBlock_C12 = ResnetBlock(
+        self.ResnetBlock_C2 = ResnetBlock(
             config, model_config['channel2'], model_config['channel2']
         )
 
@@ -340,9 +345,9 @@ class UNet(nn.Module):
         h_10 = self.ResnetBlock_D41(h_9, t_emb)
         h_11 = self.ResnetBlock_D42(h_10, t_emb)
         # CenterBlock
-        h_12 = self.ResnetBlock_C11(h_11, t_emb)
+        h_12 = self.ResnetBlock_C1(h_11, t_emb)
         h_12 = self.AttnBlock_C(h_12)
-        h_12 = self.ResnetBlock_C12(h_12, t_emb)
+        h_12 = self.ResnetBlock_C2(h_12, t_emb)
         # UpBlock1
         h_11 = self.ResnetBlock_U11(
             torch.cat([h_12, h_11], dim=1), t_emb
