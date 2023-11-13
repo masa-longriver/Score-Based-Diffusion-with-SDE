@@ -33,6 +33,10 @@ class Dataset():
     def create_dataset(self):
         transform = transforms.Compose([
             transforms.Resize((self.config['height'], self.config['width'])),
+            transforms.RandomHorizontalFlip(
+                p=self.config['horizontal_flip_rate']
+            ),
+            transforms.RandomGrayscale(p=self.config['grayscale_rate']),
             transforms.ToTensor(),
             transforms.Lambda(lambda x: (x * 2) - 1)
         ])
