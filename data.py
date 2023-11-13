@@ -36,7 +36,6 @@ class Dataset():
             transforms.RandomHorizontalFlip(
                 p=self.config['horizontal_flip_rate']
             ),
-            transforms.RandomGrayscale(p=self.config['grayscale_rate']),
             transforms.ToTensor(),
             transforms.Lambda(lambda x: (x * 2) - 1)
         ])

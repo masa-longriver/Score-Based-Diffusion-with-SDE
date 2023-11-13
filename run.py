@@ -12,9 +12,9 @@ def score_fn(x, t, model, sde):
 
 def loss_fn(config, x, model, sde):
     t = (
-                torch.rand(x.shape[0], device=x.device) 
-                * (config['sde']['T'] - config['sde']['eps']) 
-                + config['sde']['eps']
+        torch.rand(x.shape[0], device=x.device) 
+        * (config['sde']['T'] - config['sde']['eps']) 
+        + config['sde']['eps']
     )
     z = torch.randn_like(x)
     mean, std = sde.marginal_prob(x, t)

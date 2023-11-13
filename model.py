@@ -39,7 +39,7 @@ def Conv(
         padding=padding,
         kernel_size=conv_config['kernel_size']
     ).to(config['device'])
-    nn.init.xavier_uniform_(conv.weight, gain=init_scale**(0.5))
+    nn.init.xavier_uniform_(conv.weight, gain=init_scale**2)
     nn.init.zeros_(conv.bias)
 
     return conv
@@ -96,7 +96,7 @@ class NIN(nn.Module):
         self.b = nn.Parameter(
             torch.zeros(num_units), requires_grad=True
         ).to(config['device'])
-        nn.init.xavier_uniform_(self.W, gain=init_scale**(0.5))
+        nn.init.xavier_uniform_(self.W, gain=init_scale**2)
         nn.init.zeros_(self.b)
     
     def forward(self, x):
@@ -111,6 +111,7 @@ class ResnetBlock(nn.Module):
     def __init__(self, config, in_channel, out_channel):
         super().__init__()
         model_config = config['model']
+        self.out_channel = out_channel
         self.GroupNorm_1 = nn.GroupNorm(
             num_groups=model_config['groupnorm']['num_groups'],
             num_channels=in_channel,
@@ -135,6 +136,7 @@ class ResnetBlock(nn.Module):
         nn.init.zeros_(self.Dense.bias)
     
     def forward(self, x, t_emb):
+        B, C, H, W = x.shape
         h = self.GroupNorm_1(x)
         h = self.act(h)
         h = self.Conv_1(h) + self.Dense(t_emb)[:, :, None, None]
@@ -142,7 +144,8 @@ class ResnetBlock(nn.Module):
         h = self.act(h)
         h = self.Dropout(h)
         h = self.Conv_2(h)
-        x = self.NIN(x)
+        if C != self.out_channel:
+            x = self.NIN(x)
 
         return h + x
 

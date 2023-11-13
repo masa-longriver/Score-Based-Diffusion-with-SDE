@@ -69,3 +69,4 @@ if __name__ == '__main__':
             sample = sampling(config, shape, model, SDE)
             save.save_model(epoch, model)
             save.save_img(epoch, sample)
+            
