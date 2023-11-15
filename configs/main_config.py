@@ -1,10 +1,10 @@
 config = {
     'seed': 3407,
     'train': {
-        'epochs'           : 1500,
+        'epochs'           : 1000,
         'print_per_epochs' : 1,
         'eval_per_epochs'  : 10,
-        'sample_per_epochs': 100,
+        'sample_per_epochs': 50,
     },
     'model': {
         'channel1': 128,
