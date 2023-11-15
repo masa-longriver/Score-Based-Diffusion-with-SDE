@@ -4,7 +4,7 @@ config = {
         'epochs'           : 500,
         'print_per_epochs' : 1,
         'eval_per_epochs'  : 10,
-        'sample_per_epochs': 5,
+        'sample_per_epochs': 10,
     },
     'model': {
         'channel1': 128,
