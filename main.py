@@ -24,7 +24,6 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     config = load_config()
-    torch.manual_seed(config['seed'])
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     config['device'] = device
 
@@ -67,6 +66,8 @@ if __name__ == '__main__':
                 config['data']['height'], config['data']['width']
             )
             sample = sampling(config, shape, model, SDE)
-            save.save_model(epoch, model)
             save.save_img(epoch, sample)
+        
+        if (epoch + 1) % config['train']['save_per_epochs'] == 0:
+            save.save_model(epoch, model)
             

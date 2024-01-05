@@ -1,6 +1,7 @@
 import argparse
 
 import torch
+import torch.nn as nn
 
 from configs.generate_config import load_config_generate
 from configs.main_config import load_config
@@ -36,12 +37,9 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     config['device'] = device
 
-    model = UNet(config).to(config['device'])
-    state_dict = torch.load(generate_config['model_path'])
-    new_state_dict = {}
-    for k, v in state_dict.items():
-        new_state_dict[k.replace('_orig_mod.', '').replace('module.', '')] = v
-    model.load_state_dict(new_state_dict)
+    model = torch.load(generate_config['model_path'])
+    model = model.to(config['device']).to(dtype=torch.float32)
+    model = nn.DataParallel(model)
     SDE = VPSDE(config)
     save = Save(args.dataset)
 
