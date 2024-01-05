@@ -1,9 +1,9 @@
 config = {
     'train': {
-        'epochs'           : 3000,
-        'print_per_epochs' : 1,
-        'eval_per_epochs'  : 10,
-        'sample_per_epochs': 10,
+        'epochs'           : 5000,
+        'print_per_epochs' : 10,
+        'eval_per_epochs'  : 50,
+        'sample_per_epochs': 50,
         'save_per_epochs'  : 100,
 
     },
@@ -28,7 +28,7 @@ config = {
         'dropout': 0.1
     },
     'sde': {
-        'beta_min' : 0.2,
+        'beta_min' : 0.1,
         'beta_max' : 20.,
         'T'        : 1,
         'eps'      : 1e-5,
